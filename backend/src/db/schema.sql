@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS members (
   role TEXT CHECK(role IN ('parent','child')) DEFAULT 'child',
   avatar TEXT DEFAULT '👤',
   points INTEGER DEFAULT 0,
+  is_admin INTEGER DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -20,6 +21,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   recurrence TEXT DEFAULT 'none',
   recurrence_days TEXT,
   recurrence_end_date TEXT,
+  category TEXT DEFAULT 'other',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -30,6 +32,15 @@ CREATE TABLE IF NOT EXISTS rewards (
   points_cost INTEGER NOT NULL,
   icon TEXT DEFAULT '🎁',
   created_by INTEGER REFERENCES members(id) ON DELETE SET NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS calendar_events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  date TEXT NOT NULL,
+  member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
+  note TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

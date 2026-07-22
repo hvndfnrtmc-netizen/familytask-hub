@@ -14,6 +14,11 @@ export const deleteTask = id => api.delete(`/tasks/${id}`).then(r => r.data);
 export const completeTask = id => api.post(`/tasks/${id}/complete`).then(r => r.data);
 export const approveTask = id => api.post(`/tasks/${id}/approve`).then(r => r.data.task ?? r.data);
 
+export const getEvents = (month) => api.get('/events', { params: { month } }).then(r => r.data);
+export const createEvent = data => api.post('/events', data).then(r => r.data);
+export const updateEvent = (id, data) => api.put(`/events/${id}`, data).then(r => r.data);
+export const deleteEvent = id => api.delete(`/events/${id}`).then(r => r.data);
+
 export const getRewards = () => api.get('/rewards').then(r => r.data);
 export const createReward = data => api.post('/rewards', data).then(r => r.data);
 export const deleteReward = id => api.delete(`/rewards/${id}`).then(r => r.data);

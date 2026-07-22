@@ -68,26 +68,28 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
   const b = req.body;
+  const orNull = v => (v === '' || v === undefined) ? null : v;
   const title = b.title;
-  const description = b.description ?? null;
-  const due_date = b.due_date ?? null;
-  const priority = b.priority ?? 'medium';
-  const assigned_to = b.assigned_to ?? null;
-  const created_by = b.created_by ?? null;
+  const description = orNull(b.description);
+  const due_date = orNull(b.due_date);
+  const priority = b.priority || 'medium';
+  const assigned_to = orNull(b.assigned_to);
+  const created_by = orNull(b.created_by);
   const points_value = b.points_value ?? 10;
-  const recurrence = b.recurrence ?? 'none';
-  const recurrence_days = b.recurrence_days ?? null;
-  const recurrence_end_date = b.recurrence_end_date ?? null;
+  const recurrence = b.recurrence || 'none';
+  const recurrence_days = orNull(b.recurrence_days);
+  const recurrence_end_date = orNull(b.recurrence_end_date);
+  const category = b.category || 'other';
 
   if (!title) return res.status(400).json({ error: '任务名称不能为空' });
 
   const result = db.prepare(
     `INSERT INTO tasks
       (title, description, due_date, priority, assigned_to, created_by, points_value,
-       recurrence, recurrence_days, recurrence_end_date)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       recurrence, recurrence_days, recurrence_end_date, category)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(title, description, due_date, priority, assigned_to, created_by, points_value,
-        recurrence, recurrence_days, recurrence_end_date);
+        recurrence, recurrence_days, recurrence_end_date, category);
 
   res.status(201).json(db.prepare(taskWithMember + ' WHERE t.id = ?').get(result.lastInsertRowid));
 });
@@ -99,7 +101,7 @@ router.put('/:id', (req, res) => {
   const toNull = v => (v === undefined ? null : v);
   db.prepare(
     `UPDATE tasks SET title=?, description=?, due_date=?, priority=?, assigned_to=?,
-     points_value=?, recurrence=?, recurrence_days=?, recurrence_end_date=? WHERE id=?`
+     points_value=?, recurrence=?, recurrence_days=?, recurrence_end_date=?, category=? WHERE id=?`
   ).run(
     b2.title ?? task.title,
     toNull(b2.description) ?? task.description,
@@ -110,6 +112,7 @@ router.put('/:id', (req, res) => {
     b2.recurrence ?? task.recurrence,
     toNull(b2.recurrence_days) ?? task.recurrence_days,
     toNull(b2.recurrence_end_date) ?? task.recurrence_end_date,
+    b2.category ?? task.category,
     req.params.id
   );
   res.json(db.prepare(taskWithMember + ' WHERE t.id = ?').get(req.params.id));
@@ -151,12 +154,13 @@ router.post('/:id/approve', (req, res) => {
         const result = db.prepare(
           `INSERT INTO tasks
             (title, description, due_date, priority, assigned_to, created_by, points_value,
-             recurrence, recurrence_days, recurrence_end_date)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+             recurrence, recurrence_days, recurrence_end_date, category)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
         ).run(
           task.title, task.description, next, task.priority,
           task.assigned_to, task.created_by, task.points_value,
-          task.recurrence, task.recurrence_days, task.recurrence_end_date
+          task.recurrence, task.recurrence_days, task.recurrence_end_date,
+          task.category ?? 'other'
         );
         nextTask = result.lastInsertRowid;
       }

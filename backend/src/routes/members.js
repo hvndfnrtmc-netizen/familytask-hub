@@ -8,22 +8,23 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { name, role = 'child', avatar = '👤' } = req.body;
+  const { name, role = 'child', avatar = '👤', is_admin = 0 } = req.body;
   if (!name) return res.status(400).json({ error: '姓名不能为空' });
   const result = db.prepare(
-    'INSERT INTO members (name, role, avatar) VALUES (?, ?, ?)'
-  ).run(name, role, avatar);
+    'INSERT INTO members (name, role, avatar, is_admin) VALUES (?, ?, ?, ?)'
+  ).run(name, role, avatar, is_admin ? 1 : 0);
   res.status(201).json(db.prepare('SELECT * FROM members WHERE id = ?').get(result.lastInsertRowid));
 });
 
 router.put('/:id', (req, res) => {
-  const { name, role, avatar } = req.body;
+  const { name, role, avatar, is_admin } = req.body;
   const member = db.prepare('SELECT * FROM members WHERE id = ?').get(req.params.id);
   if (!member) return res.status(404).json({ error: '成员不存在' });
-  db.prepare('UPDATE members SET name=?, role=?, avatar=? WHERE id=?').run(
+  db.prepare('UPDATE members SET name=?, role=?, avatar=?, is_admin=? WHERE id=?').run(
     name ?? member.name,
     role ?? member.role,
     avatar ?? member.avatar,
+    is_admin !== undefined ? (is_admin ? 1 : 0) : member.is_admin,
     req.params.id
   );
   res.json(db.prepare('SELECT * FROM members WHERE id = ?').get(req.params.id));

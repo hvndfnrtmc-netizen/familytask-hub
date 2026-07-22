@@ -17,8 +17,14 @@ export function FamilyProvider({ children }) {
 
   useEffect(() => { refreshMembers(); }, [refreshMembers]);
 
+  const isAdmin  = !!currentMember?.is_admin;
+  const isParent = currentMember?.role === 'parent';
+
   return (
-    <FamilyContext.Provider value={{ members, currentMember, setCurrentMember, refreshMembers, loading }}>
+    <FamilyContext.Provider value={{
+      members, currentMember, setCurrentMember, refreshMembers, loading,
+      isAdmin, isParent,
+    }}>
       {children}
     </FamilyContext.Provider>
   );

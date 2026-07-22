@@ -4,6 +4,7 @@ const cors = require('cors');
 const membersRouter = require('./routes/members');
 const tasksRouter = require('./routes/tasks');
 const rewardsRouter = require('./routes/rewards');
+const eventsRouter = require('./routes/events');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/members', membersRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/rewards', rewardsRouter);
+app.use('/api/events', eventsRouter);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
