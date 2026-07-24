@@ -42,7 +42,7 @@ function EventForm({ date, members, memberColorMap, onClose, onSave, initial }) 
   // 回填逻辑：编辑时解析已存字段
   const initForm = () => {
     if (!initial) return {
-      title: '', member_id: '', note: '', time: '00:00',
+      title: '', member_id: '', note: '', time: '00:00', end_time: '',
       recurrence: 'none', recurrence_days: [], interval: 2, recurrence_end_date: '',
     };
     const rec = initial.recurrence || 'none';
@@ -58,6 +58,7 @@ function EventForm({ date, members, memberColorMap, onClose, onSave, initial }) 
       member_id: initial.member_id ? String(initial.member_id) : '',
       note: initial.note || '',
       time: initial.time || '00:00',
+      end_time: initial.end_time || '',
       recurrence: rec,
       recurrence_days,
       interval,
@@ -86,6 +87,7 @@ function EventForm({ date, members, memberColorMap, onClose, onSave, initial }) 
       ...form,
       date,
       time: form.time || '00:00',
+      end_time: form.end_time || null,
       member_id: form.member_id || null,
       recurrence_days: recurrence_days_val,
       recurrence_end_date: form.recurrence !== 'none' ? form.recurrence_end_date || null : null,
@@ -103,10 +105,14 @@ function EventForm({ date, members, memberColorMap, onClose, onSave, initial }) 
             onChange={e => set('title', e.target.value)}
             className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
 
-          {/* 时间 */}
+          {/* 时间段 */}
           <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 shrink-0">⏰ 时间</span>
+            <span className="text-xs text-gray-400 shrink-0">⏰</span>
             <input type="time" value={form.time} onChange={e => set('time', e.target.value)}
+              className="flex-1 border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <span className="text-xs text-gray-300">—</span>
+            <input type="time" value={form.end_time} onChange={e => set('end_time', e.target.value)}
+              placeholder="结束（可选）"
               className="flex-1 border border-gray-200 rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
           </div>
 
@@ -359,7 +365,7 @@ export default function Calendar() {
                     <span key={ev.id}
                       className={`w-full truncate text-[10px] leading-tight px-1 py-0.5 rounded
                         ${col ? col.badge : 'bg-orange-50 text-orange-600'}`}>
-                      {ev.time && ev.time !== '00:00' ? `${ev.time} ` : ''}{ev.member_avatar ? `${ev.member_avatar} ` : ''}{ev.title}
+                      {ev.time && ev.time !== '00:00' ? `${ev.time}${ev.end_time ? `–${ev.end_time}` : ''} ` : ''}{ev.member_avatar ? `${ev.member_avatar} ` : ''}{ev.title}
                     </span>
                   );
                 })}
@@ -424,7 +430,7 @@ export default function Calendar() {
                       <span className="font-medium text-sm text-gray-800">{ev.title}</span>
                       {ev.time && ev.time !== '00:00' && (
                         <span className="text-xs px-1.5 py-0.5 rounded-md bg-orange-50 text-orange-600 font-medium shrink-0">
-                          ⏰ {ev.time}
+                          ⏰ {ev.time}{ev.end_time ? ` — ${ev.end_time}` : ''}
                         </span>
                       )}
                       {ev.member_name && (

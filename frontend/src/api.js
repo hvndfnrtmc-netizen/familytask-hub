@@ -21,6 +21,7 @@ export const deleteEvent = id => api.delete(`/events/${id}`).then(r => r.data);
 
 export const getRewards = () => api.get('/rewards').then(r => r.data);
 export const createReward = data => api.post('/rewards', data).then(r => r.data);
+export const updateReward = (id, data) => api.put(`/rewards/${id}`, data).then(r => r.data);
 export const deleteReward = id => api.delete(`/rewards/${id}`).then(r => r.data);
 export const getRewardClaims = () => api.get('/rewards/claims').then(r => r.data);
 export const claimReward = (id, member_id) => api.post(`/rewards/${id}/claim`, { member_id }).then(r => r.data);

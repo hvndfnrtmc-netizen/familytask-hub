@@ -20,6 +20,7 @@ function addColumnIfMissing(table, column, def) {
 }
 addColumnIfMissing('tasks', 'due_time', "TEXT DEFAULT '00:00'");
 addColumnIfMissing('calendar_events', 'time', "TEXT DEFAULT '00:00'");
+addColumnIfMissing('calendar_events', 'end_time', 'TEXT');
 
 function seed() {
   const row = db.prepare('SELECT COUNT(*) as n FROM members').get();

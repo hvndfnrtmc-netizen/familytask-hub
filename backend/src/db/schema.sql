@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   title TEXT NOT NULL,
   date TEXT NOT NULL,
   time TEXT DEFAULT '00:00',
+  end_time TEXT,
   member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
   note TEXT,
   recurrence TEXT DEFAULT 'none',

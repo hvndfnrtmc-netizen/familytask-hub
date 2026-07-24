@@ -16,6 +16,23 @@ router.post('/', (req, res) => {
   res.status(201).json(db.prepare('SELECT * FROM rewards WHERE id = ?').get(result.lastInsertRowid));
 });
 
+router.put('/:id', (req, res) => {
+  const reward = db.prepare('SELECT * FROM rewards WHERE id = ?').get(req.params.id);
+  if (!reward) return res.status(404).json({ error: '奖励不存在' });
+  const { title, description, points_cost, icon } = req.body;
+  const orNull = v => (v === '' || v == null) ? null : v;
+  db.prepare(
+    'UPDATE rewards SET title=?, description=?, points_cost=?, icon=? WHERE id=?'
+  ).run(
+    title ?? reward.title,
+    orNull(description) ?? reward.description,
+    points_cost ?? reward.points_cost,
+    icon ?? reward.icon,
+    req.params.id
+  );
+  res.json(db.prepare('SELECT * FROM rewards WHERE id = ?').get(req.params.id));
+});
+
 router.delete('/:id', (req, res) => {
   const result = db.prepare('DELETE FROM rewards WHERE id = ?').run(req.params.id);
   if (result.changes === 0) return res.status(404).json({ error: '奖励不存在' });

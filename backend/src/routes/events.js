@@ -69,16 +69,17 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  const { title, date, time, member_id, note, recurrence, recurrence_days, recurrence_end_date } = req.body;
+  const { title, date, time, end_time, member_id, note, recurrence, recurrence_days, recurrence_end_date } = req.body;
   if (!title || !date) return res.status(400).json({ error: '标题和日期不能为空' });
   const orNull = v => (v === '' || v == null) ? null : v;
   const result = db.prepare(
-    `INSERT INTO calendar_events (title, date, time, member_id, note, recurrence, recurrence_days, recurrence_end_date)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO calendar_events (title, date, time, end_time, member_id, note, recurrence, recurrence_days, recurrence_end_date)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     title,
     date,
     orNull(time) ?? '00:00',
+    orNull(end_time),
     orNull(member_id),
     orNull(note),
     recurrence || 'none',
@@ -93,15 +94,16 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const ev = db.prepare('SELECT * FROM calendar_events WHERE id = ?').get(req.params.id);
   if (!ev) return res.status(404).json({ error: '日程不存在' });
-  const { title, date, time, member_id, note, recurrence, recurrence_days, recurrence_end_date } = req.body;
+  const { title, date, time, end_time, member_id, note, recurrence, recurrence_days, recurrence_end_date } = req.body;
   const orNull = v => (v === '' || v == null) ? null : v;
   db.prepare(
-    `UPDATE calendar_events SET title=?, date=?, time=?, member_id=?, note=?,
+    `UPDATE calendar_events SET title=?, date=?, time=?, end_time=?, member_id=?, note=?,
      recurrence=?, recurrence_days=?, recurrence_end_date=? WHERE id=?`
   ).run(
     title ?? ev.title,
     date ?? ev.date,
     orNull(time) ?? ev.time ?? '00:00',
+    orNull(end_time),
     orNull(member_id) ?? ev.member_id,
     orNull(note) ?? ev.note,
     recurrence || ev.recurrence,
