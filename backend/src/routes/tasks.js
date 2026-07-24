@@ -72,6 +72,7 @@ router.post('/', (req, res) => {
   const title = b.title;
   const description = orNull(b.description);
   const due_date = orNull(b.due_date);
+  const due_time = orNull(b.due_time) ?? '00:00';
   const priority = b.priority || 'medium';
   const assigned_to = orNull(b.assigned_to);
   const created_by = orNull(b.created_by);
@@ -85,10 +86,10 @@ router.post('/', (req, res) => {
 
   const result = db.prepare(
     `INSERT INTO tasks
-      (title, description, due_date, priority, assigned_to, created_by, points_value,
+      (title, description, due_date, due_time, priority, assigned_to, created_by, points_value,
        recurrence, recurrence_days, recurrence_end_date, category)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-  ).run(title, description, due_date, priority, assigned_to, created_by, points_value,
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(title, description, due_date, due_time, priority, assigned_to, created_by, points_value,
         recurrence, recurrence_days, recurrence_end_date, category);
 
   res.status(201).json(db.prepare(taskWithMember + ' WHERE t.id = ?').get(result.lastInsertRowid));
@@ -100,12 +101,13 @@ router.put('/:id', (req, res) => {
   const b2 = req.body;
   const toNull = v => (v === undefined ? null : v);
   db.prepare(
-    `UPDATE tasks SET title=?, description=?, due_date=?, priority=?, assigned_to=?,
+    `UPDATE tasks SET title=?, description=?, due_date=?, due_time=?, priority=?, assigned_to=?,
      points_value=?, recurrence=?, recurrence_days=?, recurrence_end_date=?, category=? WHERE id=?`
   ).run(
     b2.title ?? task.title,
     toNull(b2.description) ?? task.description,
     toNull(b2.due_date) ?? task.due_date,
+    toNull(b2.due_time) ?? task.due_time ?? '00:00',
     b2.priority ?? task.priority,
     toNull(b2.assigned_to) ?? task.assigned_to,
     b2.points_value ?? task.points_value,

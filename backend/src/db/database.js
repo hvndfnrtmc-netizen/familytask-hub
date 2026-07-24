@@ -14,6 +14,13 @@ db.exec('PRAGMA foreign_keys = ON');
 const schema = fs.readFileSync(SCHEMA_PATH, 'utf8');
 db.exec(schema);
 
+// 自动迁移：为旧数据库补列
+function addColumnIfMissing(table, column, def) {
+  try { db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${def}`); } catch {}
+}
+addColumnIfMissing('tasks', 'due_time', "TEXT DEFAULT '00:00'");
+addColumnIfMissing('calendar_events', 'time', "TEXT DEFAULT '00:00'");
+
 function seed() {
   const row = db.prepare('SELECT COUNT(*) as n FROM members').get();
   if (row.n > 0) return;

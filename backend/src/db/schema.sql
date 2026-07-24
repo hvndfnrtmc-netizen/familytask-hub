@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS members (
   avatar TEXT DEFAULT '👤',
   points INTEGER DEFAULT 0,
   is_admin INTEGER DEFAULT 0,
+  openid TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   title TEXT NOT NULL,
   description TEXT,
   due_date TEXT,
+  due_time TEXT DEFAULT '00:00',
   priority TEXT CHECK(priority IN ('low','medium','high')) DEFAULT 'medium',
   status TEXT CHECK(status IN ('pending','done','approved')) DEFAULT 'pending',
   assigned_to INTEGER REFERENCES members(id) ON DELETE SET NULL,
@@ -39,8 +41,12 @@ CREATE TABLE IF NOT EXISTS calendar_events (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   date TEXT NOT NULL,
+  time TEXT DEFAULT '00:00',
   member_id INTEGER REFERENCES members(id) ON DELETE CASCADE,
   note TEXT,
+  recurrence TEXT DEFAULT 'none',
+  recurrence_days TEXT,
+  recurrence_end_date TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

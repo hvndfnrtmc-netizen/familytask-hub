@@ -40,10 +40,12 @@ const RECURRENCE_OPTIONS = [
 
 const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六'];
 
+const POINTS_PRESETS = [5, 10, 15, 20, 30, 50];
+
 // ── 新建任务表单 ──────────────────────────────────────────────
 function TaskForm({ members, onClose, onSave }) {
   const [form, setForm] = useState({
-    title: '', description: '', due_date: '', priority: 'medium',
+    title: '', description: '', due_date: '', due_time: '00:00', priority: 'medium',
     assigned_to: '', points_value: 10, category: 'other',
     recurrence: 'none', recurrence_days: [], recurrence_end_date: '',
   });
@@ -119,25 +121,67 @@ function TaskForm({ members, onClose, onSave }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {/* 日期 + 时间 + 优先级 */}
+          <div className="grid grid-cols-3 gap-2">
             <input type="date" value={form.due_date} onChange={e => set('due_date', e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+              className="col-span-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+            <input type="time" value={form.due_time} onChange={e => set('due_time', e.target.value)}
+              className="col-span-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
             <select value={form.priority} onChange={e => set('priority', e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
+              className="col-span-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
               {PRIORITIES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <select value={form.assigned_to} onChange={e => set('assigned_to', e.target.value)}
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30">
-              <option value="">分配给…</option>
-              {members.map(m => <option key={m.id} value={m.id}>{m.avatar} {m.name}</option>)}
-            </select>
-            <input type="number" min={1} max={100} value={form.points_value}
-              onChange={e => set('points_value', Number(e.target.value))}
-              placeholder="积分值"
-              className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/30" />
+          {/* 分配给谁：头像选择 */}
+          <div>
+            <div className="flex items-center justify-between mb-1.5">
+              <p className="text-xs text-gray-400">分配给谁</p>
+            </div>
+            <div className="grid grid-cols-3 gap-1.5">
+              <button type="button" onClick={() => set('assigned_to', '')}
+                className={`py-1.5 rounded-xl border text-xs transition-all
+                  ${!form.assigned_to
+                    ? 'border-primary bg-primary/5 font-semibold text-primary'
+                    : 'border-gray-100 text-gray-400 hover:bg-gray-50'}`}>
+                不指定
+              </button>
+              {members.map(m => (
+                <button key={m.id} type="button"
+                  onClick={() => set('assigned_to', String(m.id))}
+                  className={`py-1.5 rounded-xl border text-xs flex items-center justify-center gap-1 transition-all
+                    ${form.assigned_to === String(m.id)
+                      ? 'border-primary bg-primary/5 font-semibold text-primary'
+                      : 'border-gray-100 text-gray-500 hover:bg-gray-50'}`}>
+                  <span>{m.avatar}</span><span>{m.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 积分 */}
+          <div>
+            <p className="text-xs text-gray-400 mb-1.5">任务积分</p>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {POINTS_PRESETS.map(p => (
+                <button key={p} type="button" onClick={() => set('points_value', p)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all border
+                    ${form.points_value === p
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-gray-100 text-gray-600 border-transparent hover:bg-orange-100'}`}>
+                  {p}分
+                </button>
+              ))}
+              <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-xl px-2 py-1.5">
+                <input
+                  type="number" min={1} max={999}
+                  value={POINTS_PRESETS.includes(form.points_value) ? '' : form.points_value}
+                  placeholder="自定义"
+                  onChange={e => { const v = parseInt(e.target.value); if (v >= 1) set('points_value', v); }}
+                  className="w-14 text-xs text-center bg-transparent focus:outline-none text-gray-700 font-medium placeholder:text-gray-400" />
+                <span className="text-xs text-gray-400">分</span>
+              </div>
+            </div>
           </div>
 
           {/* 循环设置 */}

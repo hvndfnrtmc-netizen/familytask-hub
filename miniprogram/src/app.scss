@@ -1,0 +1,42 @@
+page {
+  background: #fff7ed;
+  font-family: -apple-system, 'PingFang SC', sans-serif;
+  color: #1f2937;
+}
+
+/* 通用工具类 */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-2 { gap: 16rpx; }
+.gap-3 { gap: 24rpx; }
+.text-xs { font-size: 22rpx; }
+.text-sm { font-size: 26rpx; }
+.text-base { font-size: 30rpx; }
+.text-lg { font-size: 36rpx; }
+.text-xl { font-size: 42rpx; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }
+.text-gray-400 { color: #9ca3af; }
+.text-gray-500 { color: #6b7280; }
+.text-gray-600 { color: #4b5563; }
+.text-gray-700 { color: #374151; }
+.text-gray-800 { color: #1f2937; }
+.text-primary { color: #f97316; }
+.text-white { color: #fff; }
+.bg-white { background: #fff; }
+.bg-primary { background: #f97316; }
+.rounded-xl { border-radius: 24rpx; }
+.rounded-full { border-radius: 9999rpx; }
+.shadow-sm { box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.06); }
+.p-4 { padding: 32rpx; }
+.p-6 { padding: 48rpx; }
+.px-3 { padding-left: 24rpx; padding-right: 24rpx; }
+.py-2 { padding-top: 16rpx; padding-bottom: 16rpx; }
+.py-3 { padding-top: 24rpx; padding-bottom: 24rpx; }
+.mb-2 { margin-bottom: 16rpx; }
+.mb-4 { margin-bottom: 32rpx; }
+.mt-2 { margin-top: 16rpx; }
+.w-full { width: 100%; }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

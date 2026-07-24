@@ -1,10 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 
+const authRouter    = require('./routes/auth');
 const membersRouter = require('./routes/members');
-const tasksRouter = require('./routes/tasks');
+const tasksRouter   = require('./routes/tasks');
 const rewardsRouter = require('./routes/rewards');
-const eventsRouter = require('./routes/events');
+const eventsRouter  = require('./routes/events');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -12,6 +13,7 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
+app.use('/api/auth',    authRouter);
 app.use('/api/members', membersRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/rewards', rewardsRouter);
