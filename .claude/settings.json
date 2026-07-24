@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd C:/Users/zoe.gu/familytask-hub && git diff --quiet && git diff --staged --quiet || (git add -A && git commit -m \"auto: Claude code update $(date '+%Y-%m-%d %H:%M')\" && git push origin main)",
+            "timeout": 60,
+            "statusMessage": "同步代码到 GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
